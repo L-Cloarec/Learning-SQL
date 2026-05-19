@@ -1,4 +1,8 @@
-Instructions :
+Instruction :
+
+Table: Customer
+
+-- DB BROWSER for SQLite --
 
 CREATE TABLE IF NOT EXISTS Customer (
 	id int, 
@@ -15,3 +19,14 @@ INSERT INTO Customer (id, name, referee_id) VALUES
 ('4', 'Bill', NULL),
 ('5', 'Zack', '1'),
 ('6', 'Mark', '2');
+
+Find the names of the customer that are either:
+	1. Referred by any customer with id != 2.
+	2. Not referred by any customer.
+Return the result table in any order.
+
+My solution :
+
+SELECT name
+FROM Customer
+WHERE referee_id != 2 OR referee_id IS NULL
