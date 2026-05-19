@@ -1,0 +1,115 @@
+Instruction :
+
+Table: Visits & Transactions
+
+-- DB BROWSER for SQLite --
+
+CREATE TABLE IF NOT EXISTS Visits (
+	visit_id int,
+	customer_id int);
+	
+CREATE TABLE IF NOT EXISTS Transactions(
+	transaction_id int,
+	visit_id int,
+	amount int);
+	
+DELETE FROM Visits;
+
+INSERT INTO Visits (visit_id, customer_id) VALUES 
+('1', '23'),
+('2', '9'),
+('4', '30'),
+('5', '54'),
+('6', '96'),
+('7', '54'),
+('8', '54');
+
+DELETE FROM Transactions;
+
+INSERT INTO Transactions (transaction_id, visit_id, amount) VALUES 
+('2', '5', '310'),
+('3', '5', '300'),
+('9', '5', '200'),
+('12', '1', '910'),
+('13', '2', '970');
+
+Write a solution to find the IDs of the users who visited without making any transactions and the number of times they made these types of visits.
+Return the result table sorted in any order.
+
+My solution 1 :
+
+-- Global view --
+
+SELECT *
+FROM Visits
+LEFT JOIN Transactions ON Visits.visit_id = Transactions.visit_id 
+
+-- Specific to customer_id WHERE amount is null --
+
+SELECT customer_id,transaction_id
+FROM Visits
+LEFT JOIN Transactions ON Visits.visit_id = Transactions.visit_id
+WHERE amount IS NULL
+
+-- Merge both --
+
+SELECT customer_id, count(customer_id) as count_no_trans
+FROM (SELECT customer_id,transaction_id
+FROM Visits
+LEFT JOIN Transactions ON Visits.visit_id = Transactions.visit_id
+WHERE amount IS NULL) t
+GROUP BY customer_id
+
+-- However 28 / 29 testcases passed -- 
+-- When previous code tested "Amount cannot be null" --
+
+CREATE TABLE IF NOT EXISTS Visits2 (
+	visit_id int,
+	customer_id int);
+	
+CREATE TABLE IF NOT EXISTS Transactions2(
+	transaction_id int,
+	visit_id int,
+	amount int);
+	
+DELETE FROM Visits2;
+
+INSERT INTO Visits2 (visit_id, customer_id) VALUES 
+('1', '23'),
+('2', '9'),
+('4', '30'),
+('5', '54'),
+('6', '96'),
+('7', '54'),
+('8', '54');
+
+DELETE FROM Transactions2;
+
+INSERT INTO Transactions2 (transaction_id, visit_id, amount) VALUES 
+('2', '5', null),
+('3', '5', '300'),
+('9', '5', '200'),
+('12', '1', '910'),
+('13', '2', '970');
+
+My solution 2 :
+
+SELECT customer_id, count(*) as count_no_trans 
+FROM (
+  SELECT customer_id
+  FROM Visits v
+  LEFT JOIN Transactions tr ON v.visit_id = tr.visit_id
+  WHERE transaction_id is NULL) t
+GROUP BY customer_id
+
+-- Work for all case --
+
+My solution 3 :
+
+SELECT customer_id, count(*) as count_no_trans
+FROM Visits v
+LEFT JOIN Transactions t ON v.visit_id = t.visit_id
+WHERE t.transaction_id IS NULL
+GROUP BY customer_id
+
+-- Without the subtable --
