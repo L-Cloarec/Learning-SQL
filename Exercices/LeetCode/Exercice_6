@@ -1,0 +1,39 @@
+Instruction :
+
+Table: Employees & EmployeUNI
+
+-- DB BROWSER for SQLite --
+
+CREATE TABLE IF NOT EXISTS Employees (
+	id int, 
+	name varchar(20));
+	
+CREATE TABLE IF NOT EXISTS EmployeeUNI (
+	id int,
+	unique_id int);
+	
+DELETE FROM Employees;
+
+INSERT INTO Employees (id, name) VALUES 
+('1', 'Alice'),
+('7', 'Bob'),
+('11', 'Meir'),
+('90', 'Winston'),
+('3', 'Jonathan');
+
+DELETE FROM EmployeeUNI;
+
+INSERT INTO EmployeeUNI (id, unique_id) VALUES 
+('3', '1'),
+('11', '2'),
+('90', '3');
+
+
+Write a solution to show the unique ID of each user, If a user does not have a unique ID replace just show null.
+Return the result table in any order.
+
+My solution :
+
+SELECT unique_id, name
+FROM Employees
+LEFT JOIN EmployeeUNI ON EmployeeUNI.id = Employees.id
