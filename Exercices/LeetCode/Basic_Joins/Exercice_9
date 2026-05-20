@@ -1,0 +1,82 @@
+Instruction :
+
+Table: Weather
+
+-- DB BROWSER for SQLite --
+
+CREATE TABLE IF NOT EXISTS Weather (
+	id int,
+	recordDate date,
+	temperature int);
+	
+DELETE FROM Weather;
+
+INSERT INTO Weather (id, recordDate, temperature) VALUES 
+('1', '2015-01-01', '10'),
+('2', '2015-01-02', '25'),
+('3', '2015-01-03', '20'),
+('4', '2015-01-04', '30');
+
+Write a solution to find all dates' id with higher temperatures compared to its previous dates (yesterday).
+Return the result table in any order.
+
+My solution 1 :
+
+-- Global view --
+
+SELECT *
+FROM Weather
+
+-- Specific to lag(temperature)
+
+SELECT *, lag(temperature) OVER(ORDER BY recordDate) AS previous_date
+FROM Weather
+
+-- Merged --
+
+SELECT id
+FROM (
+SELECT *, lag(temperature) OVER(ORDER BY recordDate) AS previous_date
+FROM Weather) t
+WHERE temperature > previous_date
+
+-- However 13/15 testcases passed --
+-- My code don't take into account the need to only have 1-day difference --
+
+CREATE TABLE IF NOT EXISTS Weather2 (
+	id int,
+	recordDate date,
+	temperature int);
+	
+DELETE FROM Weather2;
+
+INSERT INTO Weather2 (id, recordDate, temperature) VALUES 
+('1', '2000-12-14', '3'),
+('2', '2000-12-16', '5');
+
+My solution 2 :
+
+-- Calculate day difference --
+
+SELECT *, lag(temperature) OVER(ORDER BY recordDate) AS previous_date, julianday(recordDate) - julianday(LAG(recordDate) OVER (ORDER BY recordDate)) AS diff_days
+FROM Weather2
+
+-- Merge with previous code in My solution 1 --
+
+SELECT id
+FROM (
+SELECT *, lag(temperature) OVER(ORDER BY recordDate) AS previous_date, julianday(recordDate) - julianday(LAG(recordDate) OVER (ORDER BY recordDate)) AS diff_days
+FROM Weather) t
+WHERE temperature > previous_date AND diff_days = 1
+
+-- However "FUNCTION test.julianday does not exist" in leetcode" --
+-- Needed to convert my julianday to DATEDIFF --
+
+Select id
+FROM (
+SELECT *, lag(temperature) OVER(ORDER BY recordDate) AS previous_date, DATEDIFF(recordDate, LAG(recordDate) OVER (ORDER BY recordDate)) AS numb_diff_day
+FROM Weather) t
+WHERE temperature > previous_temp
+AND diff_days = 1;
+
+-- Work for all cases --
