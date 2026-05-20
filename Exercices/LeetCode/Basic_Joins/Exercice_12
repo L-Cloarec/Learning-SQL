@@ -1,0 +1,86 @@
+Instruction :
+
+Table: Students, Subjects & Examinations
+
+-- DB BROWSER for SQLite --
+
+CREATE TABLE IF NOT EXISTS Students (
+	student_id int,
+	student_name varchar(20));
+
+CREATE TABLE IF NOT EXISTS Subjects (
+	subject_name varchar(20));
+
+CREATE TABLE IF NOT EXISTS Examinations (
+	student_id int,
+	subject_name varchar(20));
+
+DELETE FROM Students;
+
+INSERT INTO Students (student_id, student_name) VALUES 
+('1', 'Alice'),
+('2', 'Bob'),
+('13', 'John'),
+('6', 'Alex');
+
+DELETE FROM Subjects;
+
+INSERT INTO Subjects (subject_name) VALUES 
+('Math'),
+('Physics'),
+('Programming');
+
+DELETE FROM Examinations;
+
+INSERT INTO Examinations (student_id, subject_name) VALUES 
+('1', 'Math'),
+('1', 'Physics'),
+('1', 'Programming'),
+('2', 'Programming'),
+('1', 'Physics'),
+('1', 'Math'),
+('13', 'Math'),
+('13', 'Programming'),
+('13', 'Physics'),
+('2', 'Math'),
+('1', 'Math');
+
+
+Write a solution to find the number of times each student attended each exam.
+
+Return the result table ordered by student_id and subject_name.
+
+-- Global view --
+
+SELECT *
+FROM Students
+LEFT JOIN Examinations ON Students.student_id = Examinations.student_id
+
+-- With count --
+
+SELECT Students.student_id, student_name, subject_name, COUNT(subject_name) as attended_exams
+FROM Students
+LEFT JOIN Examinations ON Students.student_id = Examinations.student_id
+GROUP BY student_name, subject_name
+ORDER BY Students.student_id, subject_name
+
+-- Do not take into consideration Alex --
+-- Global view with CROSS and LEFT JOIN with conditions--
+
+SELECT *
+FROM Students
+CROSS JOIN Subjects
+LEFT JOIN Examinations ON Students.student_id = Examinations.student_id 
+AND Examinations.subject_name = Subjects.subject_name
+
+-- Resolution --
+
+SELECT *
+FROM Students
+CROSS JOIN Subjects
+LEFT JOIN Examinations ON Students.student_id = Examinations.student_id 
+AND Examinations.subject_name = Subjects.subject_name
+GROUP BY Students.student_id, Subjects.subject_name
+ORDER BY Students.student_id, Subjects.subject_name
+
+-- All testcases passed --
