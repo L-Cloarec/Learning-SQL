@@ -1,0 +1,55 @@
+Instruction :
+
+Table: Users & Register
+
+-- DB BROWSER for SQLite --
+
+CREATE TABLE IF NOT EXISTS Users (
+	user_id int,
+	user_name varchar(20));
+
+CREATE TABLE IF NOT EXISTS Register (
+	contest_id int,
+	user_id int);
+
+DELETE FROM Users;
+
+INSERT INTO Users (user_id, user_name) VALUES 
+('6', 'Alice'),
+('2', 'Bob'),
+('7', 'Alex');
+
+DELETE FROM Register;
+
+INSERT INTO Register (contest_id, user_id) VALUES 
+('215', '6'),
+('209', '2'),
+('208', '2'),
+('210', '6'),
+('208', '6'),
+('209', '7'),
+('209', '6'),
+('215', '7'),
+('208', '7'),
+('210', '2'),
+('207', '2'),
+('210', '7');
+
+Write a solution to find the percentage of the users registered in each contest rounded to two decimals.
+Return the result table ordered by percentage in descending order. In case of a tie, order it by contest_id in ascending order.
+
+My solution :
+
+SELECT r.contest_id, ROUND(CAST(COUNT(r.user_id) AS REAL) / (SELECT COUNT(user_id) FROM USERS) * 100,2) as percentage
+FROM Register r
+GROUP BY r.contest_id
+ORDER BY percentage DESC, r.contest_id ASC
+
+
+-- 2nd Option --
+-- Replace CAST BY * 100.0 --
+
+SELECT r.contest_id, ROUND((COUNT(r.user_id) * 100.0) / (SELECT COUNT(user_id) FROM USERS),2) as percentage
+FROM Register r
+GROUP BY r.contest_id
+ORDER BY percentage DESC, r.contest_id ASC 
