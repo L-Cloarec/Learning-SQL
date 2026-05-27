@@ -1,0 +1,34 @@
+Instruction :
+
+Table: Courses
+
+-- DB BROWSER for SQLite --
+
+CREATE TABLE IF NOT EXISTS Courses (
+	student varchar(255),
+	class varchar(255));
+	
+DELETE FROM Courses;
+
+INSERT INTO Courses (student, class) VALUES 
+('A', 'Math'),
+('B', 'English'),
+('C', 'Math'),
+('D', 'Biology'),
+('E', 'Math'),
+('F', 'Computer'),
+('G', 'Math'),
+('H', 'Math'),
+('I', 'Math');
+
+Write a solution to find all the classes that have at least five students.
+Return the result table in any order.
+
+My solution :
+
+Select class
+FROM Courses
+GROUP BY class
+HAVING COUNT(student) >= 5
+
+-- All testcases passed
