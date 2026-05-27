@@ -1,0 +1,43 @@
+Instruction :
+
+Table: Weather
+
+-- DB BROWSER for SQLite --
+
+CREATE TABLE IF NOT EXISTS Sales (
+	sale_id int,
+	product_id int,
+	year int,
+	quantity int,
+	price int);
+	
+DELETE FROM Sales;
+
+INSERT INTO Sales (sale_id, product_id, year, quantity, price) VALUES 
+('1', '100', '2008', '10', '5000'),
+('2', '100', '2009', '12', '5000'),
+('7', '200', '2011', '15', '9000');
+
+Write a solution to find all sales that occurred in the first year each product was sold.
+  1. For each product_id, identify the earliest year it appears in the Sales table.
+  2. Return all sales entries for that product in that year.
+Return a table with the following columns: product_id, first_year, quantity, and price.
+
+My solution :
+
+SELECT product_id, year as first_year, quantity, price
+FROM (SELECT *, 
+ROW_NUMBER() OVER(
+    PARTITION BY product_id
+    ORDER BY year
+) year_order
+FROM Sales) t
+WHERE year_order = 1
+
+-- Only the first cased passed --
+-- Don't seem to be the solution --
+-- Other approach necessary --
+
+SELECT product_id, year as first_year, quantity, price
+FROM Sales
+WHERE (product_id, year) IN (SELECT product_id, MIN(year) FROM Sales GROUP BY product_id)
