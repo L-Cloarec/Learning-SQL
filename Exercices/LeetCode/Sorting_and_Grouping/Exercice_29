@@ -1,0 +1,48 @@
+Instruction :
+
+Table: Customer & Product
+
+-- DB BROWSER for SQLite --
+
+CREATE TABLE IF NOT EXISTS Customer (
+	customer_id int,
+	product_key int);
+
+CREATE TABLE IF NOT EXISTS Product (
+	product_key int);
+
+DELETE FROM Customer;
+
+INSERT INTO Customer (customer_id, product_key) VALUES
+('1', '5'),
+('2', '6'),
+('3', '5'),
+('3', '6'),
+('1', '6');
+
+DELETE FROM Product;
+
+insert into Product (product_key) VALUES 
+('5'),
+('6');
+
+
+Write a solution to report the customer ids from the Customer table that bought all the products in the Product table.
+Return the result table in any order.
+
+My solution :
+
+SELECT customer_id
+FROM (
+SELECT c.customer_id, count(DISTINCT c.product_key) as calcul, (SELECT COUNT(product_key) FROM Product) as reference
+FROM Customer c
+LEFT JOIN Product p on c.product_key = p.product_key
+GROUP BY c.customer_id) t
+WHERE calcul = reference
+
+-- OR --
+
+SELECT  customer_id 
+FROM Customer 
+GROUP BY customer_id
+HAVING COUNT(distinct product_key) = (SELECT COUNT(product_key) FROM Product)
