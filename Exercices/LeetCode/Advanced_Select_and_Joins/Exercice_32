@@ -1,0 +1,28 @@
+Instruction :
+
+Table: Triangle
+
+-- DB BROWSER for SQLite --
+
+CREATE TABLE IF NOT EXISTS Triangle (
+	x int, 
+	y int, 
+	z int);
+
+DELETE FROM Triangle;
+
+INSERT INTO Triangle (x, y, z) VALUES 
+('13', '15', '30'),
+('10', '20', '15');
+
+Report for every three line segments whether they can form a triangle.
+Return the result table in any order.
+
+My solution :
+
+SELECT x, y, z, 
+	CASE WHEN x + y > z AND x + z > y AND y + z > x
+	THEN 'Yes' 
+	ELSE 'No'
+	END AS triangle
+FROM Triangle;
