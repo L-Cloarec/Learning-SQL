@@ -1,0 +1,59 @@
+Instruction :
+
+Table: Queue
+
+-- DB BROWSER for SQLite --
+
+CREATE TABLE IF NOT EXISTS Queue (
+	person_id int, 
+	person_name varchar(30), 
+	weight int, 
+	turn int);
+	
+DELETE FROM Queue;
+
+INSERT INTO Queue (person_id, person_name, weight, turn) VALUES 
+('5', 'Alice', '250', '1'),
+('4', 'Bob', '175', '5'),
+('3', 'Alex', '350', '2'),
+('6', 'John Cena', '400', '3'),
+('1', 'Winston', '500', '6'),
+('2', 'Marie', '200', '4');
+
+There is a queue of people waiting to board a bus. However, the bus has a weight limit of 1000 kilograms, so there may be some people who cannot board.
+Write a solution to find the person_name of the last person that can fit on the bus without exceeding the weight limit. The test cases are generated such that the first person does not exceed the weight limit.
+
+My solution :
+
+SELECT person_name
+FROM (
+SELECT *, LEAD(total_weight) OVER (ORDER BY turn ASC) as poids
+FROM (
+SELECT *, SUM(weight) OVER (ORDER BY turn ASC) as total_weight
+FROM Queue) a) t
+WHERE total_weight <= 1000 AND poids > 1000
+
+-- 27/29 Testcases passed --
+
+SELECT person_name
+FROM (
+SELECT *, LEAD(total_weight) OVER (ORDER BY turn ASC) as poids
+FROM (
+SELECT *, SUM(weight) OVER (ORDER BY turn ASC) as total_weight
+FROM Queue) a ) t
+WHERE total_weight <= 1000
+  AND (poids > 1000 OR poids IS NULL)
+
+-- All testcases passed --
+
+-- Other solution --
+
+SELECT 
+    person_name
+FROM (SELECT 
+        person_name,
+        SUM(weight) OVER (ORDER BY turn) AS cumulative_weight
+    FROM Queue) t
+WHERE cumulative_weight <= 1000
+ORDER BY cumulative_weight DESC
+LIMIT 1;
