@@ -1,0 +1,73 @@
+Instruction :
+
+Table: Products
+
+-- DB BROWSER for SQLite --
+
+CREATE TABLE IF NOT EXISTS Products (
+	product_id int, 
+	new_price int, 
+	change_date date);
+	
+DELETE FROM Products;
+
+INSERT INTO Products (product_id, new_price, change_date) VALUES 
+('1', '20', '2019-08-14'),
+('2', '50', '2019-08-14'),
+('1', '30', '2019-08-15'),
+('1', '35', '2019-08-16'),
+('2', '65', '2019-08-17'),
+('3', '20', '2019-08-18');
+
+Initially, all products have price 10.
+Write a solution to find the prices of all products on the date 2019-08-16.
+Return the result table in any order.
+
+My solution :
+
+-- First --
+
+SELECT
+    product_id,
+    MAX(change_date) AS last_date
+FROM Products
+WHERE change_date <= '2019-08-16'
+GROUP BY product_id;
+
+-- THEN --
+
+SELECT p1.product_id, COALESCE(new_price, 10) AS price
+FROM (SELECT DISTINCT product_id FROM Products) p1
+LEFT JOIN Products p2 ON p1.product_id = p2.product_id 
+AND p2.change_date = (SELECT
+    MAX(change_date)
+	FROM Products p3
+	WHERE p3.change_date <= '2019-08-16' AND p3.product_id = p1.product_id);
+
+-- All testcases passed --
+
+My solution 2 :
+
+SELECT 
+    p1.product_id,COALESCE(
+	(SELECT p2.new_price 
+	FROM products p2 
+	WHERE p1.product_id = p2.product_id
+	AND p2.change_date <= '2019-08-16'
+	ORDER BY p2.change_date DESC LIMIT 1),10) AS price
+FROM (
+    SELECT DISTINCT product_id
+    FROM products 
+) AS p1
+
+My solution 3 :
+
+SELECT DISTINCT product_id, 10 AS price 
+FROM Products WHERE product_id NOT IN(
+SELECT DISTINCT product_id FROM Products WHERE change_date <='2019-08-16')
+union 
+SELECT product_id, new_price AS price 
+FROM Products 
+WHERE (product_id,change_date) IN (
+	SELECT product_id , max(change_date) AS date 
+	FROM Products WHERE change_date <='2019-08-16' GROUP BY product_id)
