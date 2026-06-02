@@ -1,0 +1,27 @@
+Instruction :
+
+Table: Users
+
+-- DB BROWSER for SQLite --
+
+CREATE TABLE IF NOT EXISTS Users (
+	user_id int, 
+	name varchar(40));
+	
+DELETE FROM Users;
+
+INSERT INTO Users (user_id, name) VALUES 
+('1', 'aLice'),
+('2', 'bOB');
+
+Write a solution to fix the names so that only the first character is uppercase and the rest are lowercase.
+Return the result table ordered by user_id.
+
+My solution :
+
+SELECT user_id, CONCAT(UPPER(substr(name,1,1)) , LOWER(substr(name,2))) as name
+FROM Users
+ORDER BY user_id
+
+-- All testcases passed --
+
