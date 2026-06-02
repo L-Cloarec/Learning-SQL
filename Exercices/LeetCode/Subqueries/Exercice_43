@@ -1,0 +1,63 @@
+Instruction :
+
+Table: Employee & Department
+
+-- DB BROWSER for SQLite --
+
+CREATE TABLE IF NOT EXISTS Employee (
+	id int, 
+	name varchar(255), 
+	salary int, 
+	departmentId int);
+	
+CREATE TABLE IF NOT EXISTS Department (
+	id int, 
+	name varchar(255));
+	
+DELETE FROM Employee;
+
+INSERT INTO Employee (id, name, salary, departmentId) VALUES 
+('1', 'Joe', '85000', '1'),
+('2', 'Henry', '80000', '2'),
+('3', 'Sam', '60000', '2'),
+('4', 'Max', '90000', '1'),
+('5', 'Janet', '69000', '1'),
+('6', 'Randy', '85000', '1'),
+('7', 'Will', '70000', '1');
+
+DELETE FROM Department;
+
+INSERT INTO Department (id, name) VALUES 
+('1', 'IT'),
+('2', 'Sales');
+
+A company's executives are interested in seeing who earns the most money in each of the company's departments. A high earner in a department is an employee who has a salary in the top three unique salaries for that department.
+Write a solution to find the employees who are high earners in each of the departments.
+
+My solution :
+
+SELECT  d.name as Department, e.name as Employee, e.salary as Salary
+FROM Employee e
+JOIN Department d ON d.id = e.departmentId
+ORDER BY department, salary DESC
+
+-- 14/21 Testcases passed --
+
+SELECT Department, Employee, Salary
+FROM (
+SELECT  d.name as Department, e.name as Employee, e.salary as Salary, DENSE_RANK() OVER (PARTITION BY d.name ORDER BY e.salary DESC) as rank_salary
+FROM Employee e
+JOIN Department d ON d.id = e.departmentId
+ORDER BY department, salary DESC) t1
+WHERE rank_salary BETWEEN 1 AND 3
+
+
+SELECT Department, Employee, Salary
+FROM (
+SELECT  d.name as Department, e.name as Employee, e.salary as Salary, DENSE_RANK() OVER (PARTITION BY d.name ORDER BY e.salary DESC) as rank_salary
+FROM Employee e
+JOIN Department d ON d.id = e.departmentId
+ORDER BY department, salary DESC) t1
+WHERE rank_salary < 4
+
+-- All testcases passed --
