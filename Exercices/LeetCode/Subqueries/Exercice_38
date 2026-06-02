@@ -1,0 +1,34 @@
+Instruction :
+
+Table: Seat
+
+-- DB BROWSER for SQLite --
+
+CREATE TABLE IF NOT EXISTS Seat (
+	id int, 
+	student varchar(255));
+	
+DELETE FROM Seat;
+
+INSERT INTO Seat (id, student) VALUES 
+('1', 'Abbot'),
+('2', 'Doris'),
+('3', 'Emerson'),
+('4', 'Green'),
+('5', 'Jeames');
+
+Write a solution to swap the seat id of every two consecutive students. If the number of students is odd, the id of the last student is not swapped.
+Return the result table ordered by id in ascending order.
+
+My solution :
+
+SELECT 
+	CASE 
+		WHEN id = (SELECT MAX(id) FROM Seat) AND (SELECT MAX(id) FROM Seat) % 2 <> 0 THEN id
+		WHEN id % 2 <> 0 THEN id + 1
+		WHEN id % 2 = 0 THEN id - 1
+	ELSE NULL END as id, student
+FROM Seat
+ORDER BY id ASC
+
+-- All testcases passed --
